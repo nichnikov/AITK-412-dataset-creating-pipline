@@ -8,16 +8,6 @@ import asyncio
 from src.storage import ElasticClient
 
 
-async def es_update(es: ElasticClient, index: str, data_dicts: list[dict]):
-    """
-    Main function: pipline for update data in es
-    """         
-    await es.create_index(index)
-    await es.add_docs(index, data_dicts)
-
-
-sys_ids = [1, 14, 15, 2, 10, 8, 3]
-
 es = ElasticClient()
 
 queries_index = "dataset_queries"
@@ -27,10 +17,13 @@ for index in [queries_index, answers_index]:
     loop = asyncio.get_event_loop()
     try:
         loop.run_until_complete(es.delete_index(index))
+        loop.run_until_complete(es.create_index(index))
+        loop.close()
     except:
         loop.close()
-        print("There no index {}".format(index))
+        logger.info("There no index {}".format(index))
 
+sys_ids = [1, 14, 15, 2, 10, 8, 3]
 
 for sys_id in sys_ids:
     data_upload.sys_data_upload(sys_id)
@@ -50,9 +43,11 @@ for sys_id in sys_ids:
     
     loop = asyncio.get_event_loop()
     try:
-        loop.run_until_complete(es_update(es, answers_index, answers_dicts))
+        loop.run_until_complete(es.add_docs(answers_index, answers_dicts))
+        loop.close()
     except:
         loop.close()
+        logger.info("There is problem with sending answers to elastic for Sys {}".format(str(sys_id)))
     
     logger.info("Answers for sys ID {} send to Elastic".format(str(sys_id)))
     
@@ -72,9 +67,11 @@ for sys_id in sys_ids:
 
     loop = asyncio.get_event_loop()
     try:
-        loop.run_until_complete(es_update(es, queries_index, queries_dicts))
+        loop.run_until_complete(es.add_docs(queries_index, queries_dicts))
+        loop.close()
     except:
         loop.close()
+        logger.info("There is problem with sending queries to elastic for Sys {}".format(str(sys_id)))
     
     logger.info("Queries for sys ID {} send to Elastic".format(str(sys_id)))
     
