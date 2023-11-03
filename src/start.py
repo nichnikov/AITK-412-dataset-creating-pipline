@@ -1,3 +1,5 @@
+import os
+import pandas as pd
 from src.data_uploading import DataUploading
 from src.storage import DataFromDB
 from src.queries_analysis import QueriesAnalysis
@@ -13,6 +15,13 @@ db_con = DataFromDB(**db_credentials)
 data_upload = DataUploading(db_con)
 
 tokenizer = TextsTokenizer()
+
+stopwords = []
+for fn in ["greetings.csv", "stopwords.csv"]:
+    stwrs_df = pd.read_csv(os.path.join(os.getcwd(), "data", fn), sep="\t")
+    stopwords += list(stwrs_df["stopwords"])
+
+tokenizer.add_stopwords(stopwords)
 model = SentenceTransformer('paraphrase-multilingual-mpnet-base-v2')
 
 queries_analysis = QueriesAnalysis(tokenizer, model)

@@ -1,7 +1,15 @@
 import os
 from collections import namedtuple
+from typing import List
 from pydantic_settings import BaseSettings
 from pydantic import BaseModel
+
+class Parameters(BaseModel):
+    clusters_index: str
+    answers_index: str
+    stopwords_files: List[str]
+    max_hits: int
+    chunk_size: int
 
 
 class TextsDeleteSample(BaseModel):

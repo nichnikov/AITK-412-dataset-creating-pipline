@@ -1,11 +1,13 @@
 """https://elasticsearch-py.readthedocs.io/en/latest/async.html"""
 
+import os
 import asyncio
+from src.config import logger
 import pymssql
 from elasticsearch import AsyncElasticsearch
 from elasticsearch.helpers import async_bulk
 from src.config import logger
-from src.data_types import TextsDeleteSample, ROW, ElasticSettings
+from src.data_types import ROW, ElasticSettings
 
 
 class DataFromDB:
@@ -50,7 +52,127 @@ class DataFromDB:
                 pass
         return rows
 
+from pydantic_settings import BaseSettings
+from src.config import parameters
 
+
+class Settings(BaseSettings):
+    """Base settings object to inherit from."""
+
+    class Config:
+        env_file = os.path.join(os.getcwd(), ".env")
+        env_file_encoding = "utf-8"
+
+
+class ElasticSettings(Settings):
+    """Elasticsearch settings."""
+
+    hosts: str
+    user_name: str | None
+    password: str | None
+
+    max_hits: int = parameters.max_hits
+    chunk_size: int = parameters.chunk_size
+
+    @property
+    def basic_auth(self) -> tuple[str, str] | None:
+        """Returns basic auth tuple if user and password are specified."""
+        print(self.user_name, self.password)
+        if self.user_name and self.password:
+            return self.user_name, self.password
+        return None
+
+setting = ElasticSettings()
+
+
+class ElasticClient(AsyncElasticsearch):
+    """Handling with AsyncElasticsearch"""
+
+    def __init__(self, *args, **kwargs):
+        # self.settings = ElasticSettings()
+        self.settings = setting
+        super().__init__(
+            hosts=self.settings.hosts,
+            basic_auth=self.settings.basic_auth,
+            request_timeout=100,
+            max_retries=10,
+            retry_on_timeout=True,
+            *args,
+            **kwargs,
+        )
+    
+    async def search_by_query(self, index: str, query: {}):
+        """
+        :param query:
+        :return:
+        """
+        resp = await self.search(
+            allow_partial_search_results=True,
+            min_score=0,
+            index=index,
+            query=query,
+            size=self.settings.max_hits)
+        await self.close()
+        return resp
+
+    async def delete_by_ids(self, index_name: str, del_ids: list):
+        """
+        :param index_name:
+        :param del_ids:
+        """
+        _gen = ({"_op_type": "delete", "_index": index_name, "_id": i} for i in del_ids)
+        await async_bulk(
+            self,
+            _gen,
+            chunk_size=self.settings.chunk_size,
+            raise_on_error=False,
+            stats_only=True,
+        )
+
+    async def create_index(self, index_name: str = None) -> None:
+        """Creates the index if one does not exist."""
+        try:
+            await self.indices.create(index=index_name)
+            await self.close()
+        except:
+            await self.close()
+            logger.info("impossible create index with name {}".format(index_name))
+
+        # self.loop.run_until_complete(create(index_name))
+
+    async def create_index(self, index_name: str):
+        """
+        :param index:
+        """
+        try:
+            await self.indices.delete(index=index_name)
+            await self.close()
+        except:
+            await self.close()
+            logger.info("impossible delete index with name {}".format(index_name))
+
+        # self.loop.run_until_complete(delete(index_name))
+
+    
+    async def add_docs(self, index_name: str, docs: [{}]):
+        """
+        :param index_name:
+        :param docs:
+        """
+        try:
+            _gen = ({"_index": index_name, "_source": doc} for doc in docs)
+            await async_bulk(
+                self, _gen, chunk_size=self.settings.chunk_size, stats_only=True
+            )
+            logger.info("adding {} documents in index {}".format(len(docs), index_name))
+        except Exception:
+            logger.exception(
+                "Impossible adding {} documents in index {}".format(
+                    len(docs), index_name
+                )
+            )
+
+'''
 class ElasticClient(AsyncElasticsearch):
     """Handling with AsyncElasticsearch"""
 
@@ -230,3 +352,4 @@ class ElasticClient(AsyncElasticsearch):
             logger.info("adding {} documents in index {}".format(len(docs), index_name))
         except Exception:
             logger.exception("Impossible adding {} documents in index {}".format(len(docs), index_name))
+'''

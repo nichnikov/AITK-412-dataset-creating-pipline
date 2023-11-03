@@ -1,4 +1,8 @@
+import os
+import json
 import logging
+from src.data_types import Parameters
+
 
 logging.basicConfig(
     level=logging.INFO,
@@ -8,3 +12,7 @@ logging.basicConfig(
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+with open(os.path.join(os.getcwd(), "data", "config.json"), "r") as jf:
+    config_dict = json.load(jf)
+
+parameters = Parameters.parse_obj(config_dict)
