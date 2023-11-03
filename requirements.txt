@@ -1,0 +1,8 @@
+pymssql
+elasticsearch
+pymystem3
+aiohttp
+pydantic[dotenv]
+pandas
+pydantic-settings
+sentence-transformers
