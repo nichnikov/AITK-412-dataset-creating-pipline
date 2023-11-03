@@ -138,8 +138,6 @@ class ElasticClient(AsyncElasticsearch):
             await self.close()
             logger.info("impossible create index with name {}".format(index_name))
 
-        # self.loop.run_until_complete(create(index_name))
-
     async def create_index(self, index_name: str):
         """
         :param index:
@@ -151,9 +149,6 @@ class ElasticClient(AsyncElasticsearch):
             await self.close()
             logger.info("impossible delete index with name {}".format(index_name))
 
-        # self.loop.run_until_complete(delete(index_name))
-
-    
     async def add_docs(self, index_name: str, docs: [{}]):
         """
         :param index_name:
