@@ -1,7 +1,6 @@
 """https://elasticsearch-py.readthedocs.io/en/latest/async.html"""
 
 import os
-import asyncio
 from src.config import logger
 import pymssql
 from elasticsearch import AsyncElasticsearch
