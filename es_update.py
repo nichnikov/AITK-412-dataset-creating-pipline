@@ -1,6 +1,7 @@
 import os
 import asyncio
 import pandas as pd
+from src.config import logger
 from src.storage import ElasticClient
 
 es = ElasticClient()
@@ -22,7 +23,8 @@ for index, file in indexes_files:
     try:
         loop.run_until_complete(es.delete_index(index))
     except:
-        print("There no index {}".format(index))
+        logger.exception("There no index {}".format(index))
+        # print("There no index {}".format(index))
     
     loop.run_until_complete(es.create_index(index))
     try:

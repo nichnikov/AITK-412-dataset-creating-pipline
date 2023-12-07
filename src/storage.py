@@ -7,6 +7,9 @@ from elasticsearch import AsyncElasticsearch
 from elasticsearch.helpers import async_bulk
 from src.config import logger
 from src.data_types import ROW, ElasticSettings
+from elasticsearch.exceptions import RequestError
+from elasticsearch import NotFoundError
+import asyncio
 
 
 class DataFromDB:
@@ -90,6 +93,7 @@ class ElasticClient(AsyncElasticsearch):
     def __init__(self, *args, **kwargs):
         # self.settings = ElasticSettings()
         self.settings = setting
+        self.loop = asyncio.new_event_loop()
         super().__init__(
             hosts=self.settings.hosts,
             basic_auth=self.settings.basic_auth,
@@ -127,27 +131,53 @@ class ElasticClient(AsyncElasticsearch):
             raise_on_error=False,
             stats_only=True,
         )
-
-    async def create_index(self, index_name: str = None) -> None:
+    
+    async def create_index(self, idx_name: str):
+        await self.indices.create(index=idx_name)
+    
+    '''
+    def create_index(self, index_name: str = None) -> None:
         """Creates the index if one does not exist."""
+        
+        async def create(idx_name: str):
+            await self.indices.create(index=idx_name)
+        
+        loop = asyncio.new_event_loop()
         try:
-            await self.indices.create(index=index_name)
-            await self.close()
-        except:
-            await self.close()
-            logger.info("impossible create index with name {}".format(index_name))
-
-    async def create_index(self, index_name: str):
-        """
-        :param index:
-        """
-        try:
+            loop.run_until_complete(create(index_name))
+        except RequestError or NotFoundError as ex:
+            if ex.error == 'resource_already_exists_exception':
+                logger.exception("Index already exists. Ignore")
+                pass # Index already exists. Ignore.
+            else: # Other exception - raise it https://techoverflow.net/2021/08/04/how-to-fix-elasticsearch-python-elasticsearch-exceptions-notfounderror-notfounderror404-index_not_found_exception-no-such-index-node-node-index_or_alias/
+                logger.exception("problem with index deleting")
+                raise "exnodes"
+        loop.close()'''
+    
+    async def delete_index(self, index_name) -> None:   
             await self.indices.delete(index=index_name)
-            await self.close()
-        except:
-            await self.close()
-            logger.info("impossible delete index with name {}".format(index_name))
-
+    
+    '''
+    def delete_index(self, index_name) -> None:   
+        
+        async def delete(idx_name: str):
+            await self.indices.delete(index=idx_name)
+        
+        loop = asyncio.new_event_loop()
+        try:
+            self.loop.run_until_complete(delete(index_name))
+        except NotFoundError as ex:
+            if ex.error == 'index_not_found_exception': # index_not_found_exception
+                # loop.close()
+                # logger.exception("Index already exists. Ignore")
+                pass # Index already exists. Ignore.
+            else: # Other exception - raise it https://techoverflow.net/2021/08/04/how-to-fix-elasticsearch-python-elasticsearch-exceptions-notfounderror-notfounderror404-index_not_found_exception-no-such-index-node-node-index_or_alias/
+                logger.exception("problem with index deleting")
+                loop.close()
+                raise "exnodes"
+        loop.close()
+    '''    
+        
     async def add_docs(self, index_name: str, docs: [{}]):
         """
         :param index_name:

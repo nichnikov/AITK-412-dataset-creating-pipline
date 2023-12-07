@@ -38,8 +38,8 @@ class DataUploading:
                 # answers_df.to_csv(os.path.join("data", "answers.tsv"), sep="\t", index=False)
 
 
-
-
+today = None
+sys_ids = []
 for  sys_id in sys_ids:
         rows = db_con.get_rows(int(sys_id), today)
         data_dicts = [nt._asdict() for nt in rows]
@@ -51,7 +51,7 @@ for  sys_id in sys_ids:
 
         clusters_df = pd.DataFrame(clusters)
         print(clusters_df)
-        clusters_df.to_csv(os.path.join("data", "queries.tsv"), sep="\t", index=False)
+        clusters_df.to_csv(os.path.join("data", "231207", "queries.tsv"), sep="\t", index=False)
 
         # Извлечение текстов ответов
         patterns = re.compile("&#|;|\xa0")
@@ -61,5 +61,5 @@ for  sys_id in sys_ids:
 
         answers_df = pd.DataFrame(answers)
         print(answers_df)
-        answers_df.to_csv(os.path.join("data", "answers.tsv"), sep="\t", index=False)
+        answers_df.to_csv(os.path.join("data", "231207", "answers.tsv"), sep="\t", index=False)
         # &#
