@@ -22,7 +22,7 @@ for num, d in enumerate(queries_dicts):
         if res["hits"]["hits"]:
             temp_pairs = []
             for rd in res["hits"]["hits"]:
-                if d["id"] != rd["_source"]["id"]:
+                if int(d["id"]) != int(rd["_source"]["id"]):
                     temp_pairs += [{"sys": d["sys"], "id1": x[0], "id2": y[0], "lem_query1": x[1], "lem_query2": y[1]} 
                                     for x, y in [tuple(sorted([(str(d["id"]), d["lem_query"]), (str(rd["_source"]["id"]), rd["_source"]["lem_query"])]))]]
             not_similar_queries += temp_pairs[:10]
@@ -35,4 +35,4 @@ not_similar_queries_df = pd.DataFrame(not_similar_queries)
 print(not_similar_queries_df.shape)
 not_similar_queries_df.drop_duplicates(inplace=True)
 print(not_similar_queries_df.shape)
-not_similar_queries_df.to_csv(os.path.join(os.getcwd(), "data", "231207", "dataset_dissimilar_queries.csv"), sep="\t", index=False)
+not_similar_queries_df.to_csv(os.path.join(os.getcwd(), "data", "231207", "dataset_dissimilar_queries2.csv"), sep="\t", index=False)
