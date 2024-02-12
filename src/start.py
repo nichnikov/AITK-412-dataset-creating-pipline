@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 from src.data_uploading import DataUploading
-from src.storage import DataFromDB
+# from src.storage import DataFromDB
 from src.queries_analysis import QueriesAnalysis
 from src.texts_processing import TextsTokenizer
 from sentence_transformers import SentenceTransformer
@@ -11,8 +11,8 @@ db_credentials =  {
         "user_name": "nichnikov_ro",
         "password": "220929SrGHJ#yu"}
 
-db_con = DataFromDB(**db_credentials)
-data_upload = DataUploading(db_con)
+# b_con = DataFromDB(**db_credentials)
+# data_upload = DataUploading(db_con)
 
 tokenizer = TextsTokenizer()
 

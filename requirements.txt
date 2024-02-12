@@ -6,3 +6,4 @@ pydantic[dotenv]
 pandas
 pydantic-settings
 sentence-transformers
+pyarrow
