@@ -9,7 +9,8 @@ class QueriesAnalysis:
     def __init__(self, tokenizer: TextsTokenizer, model: SentenceTransformer) -> None:
         self.tokenizer = tokenizer
         self.model = model
-        self.QueriesTuple = namedtuple("Queris", "query, lem_query")
+        self.QueriesTuple = namedtuple("Queris", "Cluster, LemCluster")
+        # self.QueriesTuple = namedtuple("Queris", "query, lem_query")
 
     def dissimilar_queries(self, max_examples: int, threshold: float, queries: [str]) -> []:
         """
