@@ -16,3 +16,4 @@ with open(os.path.join(os.getcwd(), "data", "config.json"), "r") as jf:
     config_dict = json.load(jf)
 
 parameters = Parameters.parse_obj(config_dict)
+print(parameters)

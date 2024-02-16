@@ -46,7 +46,6 @@ class ElasticSettings(Settings):
     @property
     def basic_auth(self) -> tuple[str, str] | None:
         """Returns basic auth tuple if user and password are specified."""
-        print(self.user_name, self.password)
         if self.user_name and self.password:
             return self.user_name, self.password
         return None

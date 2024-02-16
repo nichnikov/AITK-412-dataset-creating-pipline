@@ -2,7 +2,6 @@
 
 import os
 from src.config import logger
-import pymssql
 from elasticsearch import AsyncElasticsearch
 from elasticsearch.helpers import async_bulk
 from src.config import logger
@@ -12,52 +11,10 @@ from elasticsearch import NotFoundError
 import asyncio
 
 
-class DataFromDB:
-    """
-    class for getting data from MS Server with specific SQL Query.
-    """
-
-    def __init__(self, **kwargs):
-        conn = pymssql.connect(host=kwargs["server_host"],
-                               port=1433,
-                               user=kwargs["user_name"],
-                               password=kwargs["password"],
-                               charset='cp1251',
-                               database="master")
-        self.cursor = conn.cursor(as_dict=True)
-
-    def fetch_from_db(self, sys_id: int, date: str):
-        """
-        return data (rows) from MS SQL DB Statistic on date (usually today)
-        """
-        today_str = "'" + str(date) + "'"
-        self.cursor.execute("SELECT * FROM StatisticsRAW.[search].FastAnswer_RBD  "
-                            "WHERE SysID = {} AND (ParentBegDate <= {} AND ParentEndDate IS NULL "
-                            "OR ParentBegDate <= {} AND  ParentEndDate >= {})".format(sys_id, today_str,
-                                                                                      today_str, today_str))
-        return self.cursor.fetchall()
-
-    def get_rows(self, sys_id: int, date: str) -> []:
-        """
-        Parsing rows from DB and returning list of unique tuples with etalons and list of tuples with data for answers
-        """
-        rows = []
-        data_from_db = self.fetch_from_db(sys_id, date)
-        for row in data_from_db:
-            try:
-                parent_pub_list = [int(pb) for pb in row["ParentPubList"].split(",") if pb != '']
-                rows.append(ROW(row["SysID"], row["ID"], row["Cluster"], row["ParentModuleID"],
-                                row["ParentID"], parent_pub_list, row["ChildBlockModuleID"],
-                                row["ChildBlockID"], row["ModuleID"], row["Topic"], row["Subtopic"],
-                                row["DocName"], row["ShortAnswerText"]))
-            except ValueError as err:
-                pass
-        return rows
-
 from pydantic_settings import BaseSettings
 from src.config import parameters
 
-
+'''
 class Settings(BaseSettings):
     """Base settings object to inherit from."""
 
@@ -79,10 +36,10 @@ class ElasticSettings(Settings):
     @property
     def basic_auth(self) -> tuple[str, str] | None:
         """Returns basic auth tuple if user and password are specified."""
-        print(self.user_name, self.password)
         if self.user_name and self.password:
             return self.user_name, self.password
         return None
+'''
 
 setting = ElasticSettings()
 
