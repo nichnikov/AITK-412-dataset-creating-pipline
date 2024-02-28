@@ -36,7 +36,7 @@ class ElasticSettings(Settings):
     """Elasticsearch settings."""
 
     hosts: str
-    index: str
+    # index: str
     user_name: str | None
     password: str | None
 

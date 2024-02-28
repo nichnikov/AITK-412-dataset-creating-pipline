@@ -39,5 +39,6 @@ while len(res_hits)>0:
 loop.close()
 results_df = pd.concat(results_dfs, axis=0)
 print(results_df)
-# results_df.to_csv(os.path.join("data", "240212", "all_clusters.tsv"), sep="\t", index=False)
-results_df.to_feather(os.path.join("data", "240214", "all_clusters.feather"))
+
+results_df.to_csv(os.path.join("data", "240228", "all_clusters.tsv"), sep="\t", index=False)
+results_df.to_feather(os.path.join("data", "240228", "all_clusters.feather"))
