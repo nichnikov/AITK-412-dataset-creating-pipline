@@ -1,3 +1,4 @@
+"""
 from sklearn.cluster import KMeans
 import numpy as np
 
@@ -13,3 +14,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 X = [[0, 0, 0], [1, 1, 1]]
 Y = [[1, 0, 0], [1, 1, 1]]
 print(cosine_similarity(X, Y))
+"""
+
+d = {"d": "D"}
+print(list(d.keys())[0])
