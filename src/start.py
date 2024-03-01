@@ -2,7 +2,7 @@ import os
 import pandas as pd
 from src.data_uploading import DataUploading
 # from src.storage import DataFromDB
-from src.queries_analysis import QueriesAnalysis
+# from src.queries_analysis import QueriesAnalysis
 from src.texts_processing import TextsTokenizer
 from sentence_transformers import SentenceTransformer
 
@@ -24,4 +24,4 @@ for fn in ["greetings.csv", "stopwords.csv"]:
 tokenizer.add_stopwords(stopwords)
 model = SentenceTransformer('paraphrase-multilingual-mpnet-base-v2')
 
-queries_analysis = QueriesAnalysis(tokenizer, model)
+# queries_analysis = QueriesAnalysis(tokenizer, model)
