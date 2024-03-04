@@ -61,7 +61,7 @@ class ElasticClient(AsyncElasticsearch):
             **kwargs,
         )
     
-    async def search_by_query(self, index: str, query: {}):
+    async def search_by_query(self, index: str, query: dict):
         """
         :param query:
         :return:
@@ -135,7 +135,7 @@ class ElasticClient(AsyncElasticsearch):
         loop.close()
     '''    
         
-    async def add_docs(self, index_name: str, docs: [{}]):
+    async def add_docs(self, index_name: str, docs: list[dict]):
         """
         :param index_name:
         :param docs:

@@ -4,15 +4,16 @@ import pandas as pd
 from src.config import logger
 from src.storage import ElasticClient
 
+df = pd.read_feather(os.path.join(os.getcwd(), "datasets", "dissimilar_queries_sys1.feather"))
+print(df)
+
 es = ElasticClient()
 
-queries_index = "dataset_queries"
-answers_index = "dataset_answers"
-
-indexes_files = [(answers_index, "dataset_answers.csv"), (queries_index, "dataset_queries.csv")]
+thinned_queries = "thinned_fa_questions"
+indexes_files = [(thinned_queries, "sys_1_thinned_questions.csv")]
 
 for index, file in indexes_files:
-    df = pd.read_csv(os.path.join(os.getcwd(), "data", file), sep="\t")
+    df = pd.read_csv(os.path.join(os.getcwd(), "datasets", file), sep="\t")
     print("before print(df.shape)", df.shape)
     df.dropna(inplace=True)
     print("after print(df.shape)", df.shape)      
