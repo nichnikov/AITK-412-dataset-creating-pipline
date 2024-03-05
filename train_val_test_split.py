@@ -49,7 +49,7 @@ def dataset_split(dataset_df: DataFrame, shares: dict):
     - тестовую выборки
 
     Args:
-        datasets (dict[DataFrame]): {"similar": DataFrame.object, "dissimilar": DataFrame.object}
+        dataset_df (DataFrame): 
         shares (dict): {"train": float, "val": float, "test": float},  
                         shares["train"] + shares["val"] + shares["test"] must be equal 1.0
     """
