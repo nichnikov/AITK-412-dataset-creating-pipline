@@ -24,6 +24,6 @@ for sys_id in [1, 2, 3, 4, 8, 10, 11, 13, 14, 15, 16, 21, 22, 27, 28, 34, 37, 45
     '''
     
 
-dissimilar_queries_df = pd.read_feather(os.path.join("clusters", "sys_2_thinned_questions.feather"))
-print(dissimilar_queries_df)
-dissimilar_queries_df.to_csv(os.path.join("clusters", "sys_2_thinned_questions.csv"), sep="\t", index=False)
+df = pd.read_feather(os.path.join("clusters", "sys_1_thinned_questions.feather"))
+print(df)
+df.to_csv(os.path.join("clusters", "sys_1_thinned_questions.csv"), sep="\t", index=False)
