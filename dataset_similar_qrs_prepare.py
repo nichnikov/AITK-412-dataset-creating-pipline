@@ -14,9 +14,19 @@ from src.config import logger
 QueriesTuple = namedtuple("QueriesTuple", "lm_query, query")
 # [1, 2, 3, 4, 8, 10, 11, 13, 14, 15, 16, 21, 22, 27, 28, 34, 37, 45, 47, 50, 51, 54, 55]
 
-for sys in [1, 2, 3, 4, 8, 10, 11, 13, 14, 15, 16, 21, 22, 27, 28, 34, 37, 45, 47, 50, 51, 54, 55]:
-    in_fn = "_".join(["sys", str(sys), "thinned_questions.csv"])
-    sys_df = pd.read_csv(os.path.join("datasets", in_fn), sep="\t")
+for sys_id in [1, 2, 3, 4, 8, 10, 11, 13, 14, 15, 16, 21, 22, 27, 28, 34, 37, 45, 47, 50, 51, 54, 55]:
+    '''
+    Прореженные вопросы с удаленными дублями:
+    После выполнения обработок:
+    - thinned_queries.py
+    - duplicates_remove.py
+    
+    '''
+
+    # in_fn = "_".join(["sys", str(sys), "thinned_questions.csv"])
+    # sys_df = pd.read_csv(os.path.join("datasets", in_fn), sep="\t")
+    in_fn = "_".join(["sys", str(sys_id), "thinned_questions_without_duplicates.feather"])
+    sys_df = pd.read_feather(os.path.join(os.getcwd(), "clusters",  in_fn))
 
     """ Похожие вопросы: """
     fa_ids = sys_df["TemplateID"].unique()
@@ -33,5 +43,5 @@ for sys in [1, 2, 3, 4, 8, 10, 11, 13, 14, 15, 16, 21, 22, 27, 28, 34, 37, 45, 4
 
     similar_queries_df = pd.DataFrame(similar_queries)
     logger.info("Make {} pairs of similar queries".format(str(len(similar_queries))) )
-    out_fn = "".join(["similar_queries_sys_", str(sys), ".feather"])
+    out_fn = "".join(["similar_queries_sys_", str(sys_id), ".feather"])
     similar_queries_df.to_feather(os.path.join("datasets", out_fn))

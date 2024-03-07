@@ -16,9 +16,19 @@ index = "thinned_fa_questions"
 loop = asyncio.get_event_loop()
 
 # [1, 2, 3, 4, 8, 10, 11, 13, 14, 15, 16, 21, 22, 27, 28, 34, 37, 45, 47, 50, 51, 54, 55]
-for sys_id in [3, 4, 8, 10, 11, 13, 14, 15, 16, 21, 22, 27, 28, 34, 37, 45, 47, 50, 51, 54, 55]:
-    in_fn = "_".join(["sys", str(sys_id), "thinned_questions.csv"])
-    sys_df = pd.read_csv(os.path.join(os.getcwd(), "datasets",  in_fn), sep="\t")
+for sys_id in [1, 2, 3, 4, 8, 10, 11, 13, 14, 15, 16, 21, 22, 27, 28, 34, 37, 45, 47, 50, 51, 54, 55]:
+    # in_fn = "_".join(["sys", str(sys_id), "thinned_questions.csv"])
+    # sys_df = pd.read_csv(os.path.join(os.getcwd(), "datasets",  in_fn), sep="\t")
+    
+    '''
+    Прореженные вопросы с удаленными дублями:
+    После выполнения обработок:
+    - thinned_queries.py
+    - duplicates_remove.py
+    '''
+    
+    in_fn = "_".join(["sys", str(sys_id), "thinned_questions_without_duplicates.feather"])
+    sys_df = pd.read_feather(os.path.join(os.getcwd(), "clusters",  in_fn))
 
     sys_df.dropna(inplace=True)
     sys_queries_dcts = sys_df.to_dict(orient="records")
@@ -41,7 +51,7 @@ for sys_id in [3, 4, 8, 10, 11, 13, 14, 15, 16, 21, 22, 27, 28, 34, 37, 45, 47, 
   
     dissimilar_queries = []
     for num, query_dict in enumerate(sys_queries_dcts):
-        logger.info(str(num + 1) + "/" + str(len(sys_queries_dcts)))
+        logger.info("sys:" + str(sys_id) + str(num + 1) + "/" + str(len(sys_queries_dcts)))
         query_dct={"match": {"LmQuery": query_dict["LmQuery"]}}
         try:
             search_result_dct = loop.run_until_complete(es.search_by_query(index, query_dct))
