@@ -10,8 +10,8 @@ import pandas as pd
 from src.storage import ElasticClient
 
 es = ElasticClient()
-es_index = "expert_bot_results"
-# es_index = "clusters"
+# es_index = "expert_bot_results"
+es_index = "clusters"
 search_func = es.search(
         allow_partial_search_results=True,
         min_score=0,
@@ -23,11 +23,10 @@ search_func = es.search(
 loop = asyncio.get_event_loop()
 res = loop.run_until_complete(search_func)
 
-# res_hits = res["hits"]["hits"]
-# res_hits_df = pd.DataFrame([d["_source"] for d in res_hits])
+
+
 
 k = 1
-# results_dfs = [res_hits_df]
 res_hits = ["a"]
 results_dfs = []
 if es_index == "expert_bot_results":
@@ -60,5 +59,9 @@ loop.close()
 results_df = pd.concat(results_dfs, axis=0)
 print(results_df)
 
-results_df.to_csv(os.path.join("data", "240311", "es_queries_answers.tsv"), sep="\t", index=False)
-results_df.to_feather(os.path.join("data", "240311", "es_queries_answers.feather"))
+
+results_df.to_csv(os.path.join("data", "240312", "clusters.tsv"), sep="\t", index=False)
+results_df.to_feather(os.path.join("data", "240312", "clusters.feather"))
+
+# results_df.to_csv(os.path.join("data", "240312", "es_queries_answers.tsv"), sep="\t", index=False)
+# results_df.to_feather(os.path.join("data", "240312", "es_queries_answers.feather"))

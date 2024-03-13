@@ -24,6 +24,25 @@ for sys_id in [1, 2, 3, 4, 8, 10, 11, 13, 14, 15, 16, 21, 22, 27, 28, 34, 37, 45
     '''
     
 
-df = pd.read_feather(os.path.join("clusters", "sys_1_thinned_questions.feather"))
+
+"""Соответствие систем и пабайди:"""
+
+df = pd.read_feather(os.path.join("data", "240312", "clusters.feather"))
 print(df)
-df.to_csv(os.path.join("clusters", "sys_1_thinned_questions.csv"), sep="\t", index=False)
+print(df.info())
+sys_pub_df = df[["SysID", "ParentPubList"]]
+sys_pub_df["ParentPubList"] = sys_pub_df["ParentPubList"].apply(lambda x: tuple(x))
+sys_pub_df.drop_duplicates(inplace=True)
+
+from itertools import chain
+
+sys_pub = [y for y in chain(*[[(s, x) for x in p] for s, p in list(sys_pub_df.itertuples(index=False))])]
+print(sys_pub[:10])
+print(len(set(sys_pub)))
+sys_pub_unique = set(sys_pub)
+sys_pub_unique_df = pd.DataFrame(sys_pub_unique, columns=["sys", "pub"])
+
+print(sys_pub_unique_df)
+sys_pub_unique_df.to_csv(os.path.join("data", "240312", "sys_pub.csv"), index=False)
+
+# df.to_csv(os.path.join("clusters", "sys_1_thinned_questions.csv"), sep="\t", index=False)
